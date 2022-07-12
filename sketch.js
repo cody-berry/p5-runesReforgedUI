@@ -15,6 +15,7 @@ let instructions
 let debugCorner /* output debug text in the bottom left corner of the canvas */
 let runes /* a json file of runes that we're going to use to replicate the
  runesReforged UI */
+let pathImages
 
 
 function preload() {
@@ -35,33 +36,45 @@ function setup() {
         numpad 1 → freeze sketch</pre>`)
 
     debugCorner = new CanvasDebugCorner(5)
+
+    // https://ddragon.canisback.com/img/
+
+    pathImages = []
+
+    for (let path of Object.values(runes)) {
+        pathImages.push(loadImage('https://ddragon.canisback.com/img/' + path["icon"]))
+    }
+    console.log(pathImages)
 }
 
 
 function draw() {
     background(234, 34, 24)
 
-    let pathNumber = 0
+    if (pathImages[4]) {
+        let pathNumber = 0
 
-    for (let path of Object.values(runes)) {
-        let slots = []
-        for (let slot of path['slots']) {
-            let runeOptions = []
-            for (let runeOption of slot['runes']) {
-                runeOptions.push(runeOption['name'])
+        for (let path of Object.values(runes)) {
+            let slots = []
+            for (let slot of path['slots']) {
+                let runeOptions = []
+                for (let runeOption of slot['runes']) {
+                    runeOptions.push(runeOption['name'])
+                }
+                slots.push(runeOptions)
             }
-            slots.push(runeOptions)
+
+            text(path['key'], 10, pathNumber * 75 + 15)
+            image(pathImages[pathNumber], 10 + textWidth(path['key'] + ' '), pathNumber * 75 + 15 - textAscent(), textAscent() + textDescent(), textAscent() + textDescent())
+
+            let slotNumber = 1
+            for (let slot of slots) {
+                text(slot, 10, pathNumber * 75 + slotNumber * 15 + 15)
+                slotNumber++
+            }
+
+            pathNumber++
         }
-
-        text(path['key'] + ':', 10, pathNumber*75 + 15)
-
-        let slotNumber = 1
-        for (let slot of slots) {
-            text(slot, 10, pathNumber*75 + slotNumber*15 + 15)
-            slotNumber++
-        }
-
-        pathNumber++
     }
 
     /* debugCorner needs to be last so its z-index is highest */
