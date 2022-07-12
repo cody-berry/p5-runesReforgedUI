@@ -4,9 +4,9 @@
  *
  *  https://ddragon.leagueoflegends.com/cdn/12.12.1/data/en_US/runesReforged.json
  *
- *  ☐ display each path name
- *  ☐ display keystones in each path
- *  ☐ display all runes in each path
+ *  ☒ display each path name
+ *  ☒ display keystones in each path
+ *  ☒ display all runes in each path
  *  ☐ find images for each of the three items above
  */
 
@@ -24,7 +24,7 @@ function preload() {
 
 
 function setup() {
-    let cnv = createCanvas(600, 300)
+    let cnv = createCanvas(960, 540)
     cnv.parent('#canvas')
     colorMode(HSB, 360, 100, 100, 100)
     textFont(font, 14)
@@ -35,22 +35,31 @@ function setup() {
         numpad 1 → freeze sketch</pre>`)
 
     debugCorner = new CanvasDebugCorner(5)
-    console.log(runes)
 }
 
 
 function draw() {
     background(234, 34, 24)
 
-    let pathNumber = 1
+    let pathNumber = 0
 
     for (let path of Object.values(runes)) {
-        let keystones = []
-        for (let keystone of path['slots'][0]['runes']) {
-            keystones.push(' ' + keystone['name'])
+        let slots = []
+        for (let slot of path['slots']) {
+            let runeOptions = []
+            for (let runeOption of slot['runes']) {
+                runeOptions.push(runeOption['name'])
+            }
+            slots.push(runeOptions)
         }
 
-        text(path['key'] + ':' + keystones, 10, pathNumber*20)
+        text(path['key'] + ':', 10, pathNumber*75 + 15)
+
+        let slotNumber = 1
+        for (let slot of slots) {
+            text(slot, 10, pathNumber*75 + slotNumber*15 + 15)
+            slotNumber++
+        }
 
         pathNumber++
     }
