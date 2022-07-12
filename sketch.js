@@ -43,8 +43,15 @@ function draw() {
     background(234, 34, 24)
 
     let pathNumber = 1
+
     for (let path of Object.values(runes)) {
-        text(path['key'], 10, pathNumber*30)
+        let keystones = []
+        for (let keystone of path['slots'][0]['runes']) {
+            keystones.push(' ' + keystone['name'])
+        }
+
+        text(path['key'] + ':' + keystones, 10, pathNumber*20)
+
         pathNumber++
     }
 
