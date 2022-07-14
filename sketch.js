@@ -7,7 +7,7 @@
  *  ☒ display each path name
  *  ☒ display keystones in each path
  *  ☒ display all runes in each path
- *  ☐ find images for each of the three items above
+ *  ☒☒☒ find images for each of the three items above
  */
 
 let font
@@ -28,7 +28,7 @@ function setup() {
     let cnv = createCanvas(960, 540)
     cnv.parent('#canvas')
     colorMode(HSB, 360, 100, 100, 100)
-    textFont(font, 14)
+    textFont(font, 75)
 
     /* initialize instruction div */
     instructions = select('#ins')
@@ -66,6 +66,11 @@ function setup() {
 
 function draw() {
     background(234, 34, 24)
+    textFont(font, 75)
+    noStroke()
+
+    push()
+    translate(50, 50)
 
     if (runeImages[4][1][3][2]) {
         let pathNumber = 0
@@ -86,14 +91,16 @@ function draw() {
             // because we want the image to fit in the text. The first element
             // is the URL for the path, and the second element stores a list
             // of the URLs for each slot.
-            image(runeImages[pathNumber][0], 10, pathNumber * 75 + 15 - textAscent(), 15, 15)
+            image(runeImages[pathNumber][0], 90, pathNumber*80, 64, 64)
+            text(runes[pathNumber]['name'], 160, pathNumber*80 + 60)
+
 
             // here's where we're going to display each rune slot
-            let slotNumber = 1
+            let slotNumber = 0
             for (let slot of slots) {
                 let optionNumber = 0
                 for (let option of slot) {
-                    image(runeImages[pathNumber][1][slotNumber - 1][optionNumber], 10 + optionNumber * 15, pathNumber * 75 + slotNumber*15, 15, 15)
+                    image(runeImages[pathNumber][1][slotNumber][optionNumber], 10 + optionNumber * 16, pathNumber * 80 + slotNumber*16, 15, 15)
                     optionNumber++
                 }
                 slotNumber++
@@ -102,6 +109,8 @@ function draw() {
             pathNumber++
         }
     }
+
+    pop()
 
     /* debugCorner needs to be last so its z-index is highest */
     debugCorner.setText(`frameCount: ${frameCount}`, 2)
