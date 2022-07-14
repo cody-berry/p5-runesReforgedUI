@@ -45,13 +45,17 @@ function setup() {
         // stores all the relevant images to the path
         let pathImages = [loadImage('https://ddragon.canisback.com/img/' + path["icon"])]
 
-        // stores the keystone images in the path
-        let keystoneImages = []
-        for (let keystone of path['slots'][0]['runes']) {
-            keystoneImages.push(loadImage('https://ddragon.canisback.com/img/' + keystone['icon']))
+        // stores the rune images in the path
+        let optionImages = []
+        for (let slot of path['slots']) {
+            let slotImages = []
+            for (let option of slot['runes']) {
+                slotImages.push(loadImage('https://ddragon.canisback.com/img/' + option['icon']))
+            }
+            optionImages.push(slotImages)
         }
 
-        pathImages.push(keystoneImages)
+        pathImages.push(optionImages)
 
         runeImages.push(pathImages)
     }
@@ -63,7 +67,7 @@ function setup() {
 function draw() {
     background(234, 34, 24)
 
-    if (runeImages[4][0]) {
+    if (runeImages[4][1][3][2]) {
         let pathNumber = 0
 
         for (let path of Object.values(runes)) {
@@ -78,24 +82,19 @@ function draw() {
             }
 
             // each rune path has 4 rune slots
-            // we're going to use the text height as our image width and height
+            // we're going to use 15 as our image width and height
             // because we want the image to fit in the text. The first element
             // is the URL for the path, and the second element stores a list
             // of the URLs for each slot.
-            let textHeight = textAscent() + textDescent()
-            image(runeImages[pathNumber][0], 10, pathNumber * 75 + 15 - textAscent(), textHeight, textHeight)
+            image(runeImages[pathNumber][0], 10, pathNumber * 75 + 15 - textAscent(), 15, 15)
 
             // here's where we're going to display each rune slot
             let slotNumber = 1
             for (let slot of slots) {
-                if (slotNumber === 1) {
-                    let optionNumber = 0
-                    for (let option of slot) {
-                        image(runeImages[pathNumber][1][optionNumber], 10 + optionNumber*15, pathNumber * 75 + 15, 15, 15)
-                        optionNumber++
-                    }
-                } else {
-                    text(slot, 10, pathNumber * 75 + slotNumber * 15 + 15)
+                let optionNumber = 0
+                for (let option of slot) {
+                    image(runeImages[pathNumber][1][slotNumber - 1][optionNumber], 10 + optionNumber * 15, pathNumber * 75 + slotNumber*15, 15, 15)
+                    optionNumber++
                 }
                 slotNumber++
             }
