@@ -15,7 +15,7 @@ let instructions
 let debugCorner /* output debug text in the bottom left corner of the canvas */
 let runes /* a json file of runes that we're going to use to replicate the
  runesReforged UI */
-let pathImages
+let runeImages
 
 
 function preload() {
@@ -39,22 +39,35 @@ function setup() {
 
     // https://ddragon.canisback.com/img/
 
-    pathImages = []
+    runeImages = []
 
     for (let path of Object.values(runes)) {
-        pathImages.push(loadImage('https://ddragon.canisback.com/img/' + path["icon"]))
+        // stores all the relevant images to the path
+        let pathImages = [loadImage('https://ddragon.canisback.com/img/' + path["icon"])]
+
+        // stores the keystone images in the path
+        let keystoneImages = []
+        for (let keystone of path['slots'][0]['runes']) {
+            keystoneImages.push(loadImage('https://ddragon.canisback.com/img/' + keystone['icon']))
+        }
+
+        pathImages.push(keystoneImages)
+
+        runeImages.push(pathImages)
     }
-    console.log(pathImages)
+    console.log(runeImages)
+    console.log(runes)
 }
 
 
 function draw() {
     background(234, 34, 24)
 
-    if (pathImages[4]) {
+    if (runeImages[4][0]) {
         let pathNumber = 0
 
         for (let path of Object.values(runes)) {
+            // the rune slots so that we can display all the rune names
             let slots = []
             for (let slot of path['slots']) {
                 let runeOptions = []
@@ -64,12 +77,26 @@ function draw() {
                 slots.push(runeOptions)
             }
 
-            text(path['key'], 10, pathNumber * 75 + 15)
-            image(pathImages[pathNumber], 10 + textWidth(path['key'] + ' '), pathNumber * 75 + 15 - textAscent(), textAscent() + textDescent(), textAscent() + textDescent())
+            // each rune path has 4 rune slots
+            // we're going to use the text height as our image width and height
+            // because we want the image to fit in the text. The first element
+            // is the URL for the path, and the second element stores a list
+            // of the URLs for each slot.
+            let textHeight = textAscent() + textDescent()
+            image(runeImages[pathNumber][0], 10, pathNumber * 75 + 15 - textAscent(), textHeight, textHeight)
 
+            // here's where we're going to display each rune slot
             let slotNumber = 1
             for (let slot of slots) {
-                text(slot, 10, pathNumber * 75 + slotNumber * 15 + 15)
+                if (slotNumber === 1) {
+                    let optionNumber = 0
+                    for (let option of slot) {
+                        image(runeImages[pathNumber][1][optionNumber], 10 + optionNumber*15, pathNumber * 75 + 15, 15, 15)
+                        optionNumber++
+                    }
+                } else {
+                    text(slot, 10, pathNumber * 75 + slotNumber * 15 + 15)
+                }
                 slotNumber++
             }
 
